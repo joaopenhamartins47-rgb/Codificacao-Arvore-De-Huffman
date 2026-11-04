@@ -19,6 +19,7 @@ struct Lista_de_registros
     int simbolo, frequencia;
     char huffman[100];
     char palavra[50];
+    struct Lista_de_registros *prox;
 };typedef struct Lista_de_registros listareg;
 
 
@@ -34,7 +35,7 @@ struct Lista_encadeada
     struct Lista_encadeada *prox;
 };typedef struct Lista_encadeada Listaen;
 
-//Estrutura auxiliar especifica para o arquivo
+//Estrutura auxiliar especifica para o arquivo binario
 struct Registro_Arquivo
 {
     int simbolo;
@@ -91,7 +92,7 @@ primeiro eu construo a lista de registros enquanto leio o arq texto pra depois d
 
 /*
 Progressao programa 1
-1 - Ler texto_base.txt
+1 - Ler texto.txt
 
 Texto grande utilizado para calcular as frequências.
 
@@ -105,6 +106,7 @@ Símbolo, palavra e frequência.
 
 3 - Construir a árvore de Huffman
 
+Construir a lista encadeada para a arvore de huffman
 Utilizar as frequências para combinar os nós.
 
 
@@ -131,6 +133,64 @@ Transformar as palavras em códigos de Huffman.
 
 Armazenar os bits agrupados em bytes.
 */
+
+
+listareg *criar_registro(char palavra[])
+{
+    static int simbolo = 0;
+
+    listareg *novo = (listareg *) malloc(sizeof(listareg));
+    novo->simbolo = simbolo++;
+    novo->frequencia = 1;
+    strcpy(novo->palavra, palavra);
+    novo->huffman[0] = '\0';
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserir_registro(listareg **inicio, char palavra[])
+{
+    listareg *aux;
+
+    listareg *novo = criar_registro(palavra);
+    if(*inicio == NULL)
+        *inicio = novo;
+    else
+    {
+        aux = *inicio;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+}
+
+
+listareg *existe_registro(listareg *inicio, char palavra[])
+{
+    while(inicio && strcmp(inicio->palavra, palavra) != 0)
+        inicio = inicio->prox;
+    if(!inicio)
+        return NULL;
+    return inicio;
+}
+
+void tratar_palavra(listareg **inicio, char palavra[])
+{
+    listareg *achado = existe_registro(*inicio, palavra);
+
+    if (achado)
+        achado->frequencia++;
+    else
+        inserir_registro(inicio, palavra);
+}
+
+void construir_lista_registros()
+{
+
+}
+
+
 
 int main(void)
 {
