@@ -187,7 +187,7 @@ void tratar_palavra(listareg **inicio, char palavra[])
 
 void construir_lista_registros()
 {
-
+    //Vou ler o arquivo texto e tratar cada palavra inserindo na lista de registros
 }
 
 
