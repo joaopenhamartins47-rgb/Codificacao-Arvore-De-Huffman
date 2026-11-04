@@ -82,6 +82,63 @@ Algoritmo de construção
 
 
 
+
+
+/*
+primeiro eu construo a lista de registros enquanto leio o arq texto pra depois de lido, fazer o algoritmo de construcao da arvore em cima dessa lista criada, pra atraves dos caminhos, definir o codigo da arvore de huffman
+*/
+
+
+/*
+Progressao programa 1
+1 - Ler texto_base.txt
+
+Texto grande utilizado para calcular as frequências.
+
+
+
+2 - Construir a lista de registros
+
+Símbolo, palavra e frequência.
+
+
+
+3 - Construir a árvore de Huffman
+
+Utilizar as frequências para combinar os nós.
+
+
+
+4 - Gerar os códigos
+
+Percorrer a árvore e preencher o campo de código de cada registro.
+
+
+
+5 - Gravar registros.bin
+
+Persistir símbolo, palavra e código. Não gravar frequência.
+
+
+
+6 - Codificar outra frase
+
+Transformar as palavras em códigos de Huffman.
+
+
+
+7 - Gravar frase_codificada.bin
+
+Armazenar os bits agrupados em bytes.
+*/
+
+int main(void)
+{
+    return 0;
+}
+
+
+
 /*
 Progresso do trabalho
 0/24
@@ -123,12 +180,3 @@ Progresso do trabalho
 [ ] Testar espaços e pontuação
 [ ] Testar a execução independente dos programas
 */
-
-/*
-primeiro eu construo a lista de registros enquanto leio o arq texto pra depois de lido, fazer o algoritmo de construcao da arvore em cima dessa lista criada, pra atraves dos caminhos, definir o codigo da arvore de huffman
-*/
-
-int main(void)
-{
-    return 0;
-}
