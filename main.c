@@ -81,6 +81,53 @@ Algoritmo de construção
 */
 
 
+
+/*
+Progresso do trabalho
+0/24
+
+
+
+1. Preparação
+[ ] Criar texto_base.txt com conteúdo maior que o exemplo
+[ ] Definir tratamento de pontuação, maiúsculas, espaços e acentos
+[ ] Definir as três estruturas e suas operações
+
+
+2. Programa 1
+[ ] Ler o arquivo texto
+[ ] Construir lista de registros e contar frequências
+[ ] Criar as folhas da árvore
+[ ] Implementar lista encadeada ordenada
+[ ] Construir a árvore de Huffman
+[ ] Gerar códigos e preencher os registros
+[ ] Exibir lista e árvore
+[ ] Gravar registros.bin
+[ ] Codificar uma frase diferente
+[ ] Montar bytes e gravar frase_codificada.bin
+
+
+3. Programa 2
+[ ] Ler registros.bin
+[ ] Reconstruir a árvore utilizando os códigos
+[ ] Ler o cabeçalho e os bytes codificados
+[ ] Extrair os bits sem deslocamentos
+[ ] Percorrer a árvore e recuperar os símbolos
+[ ] Montar e exibir a frase decodificada
+
+
+4. Validação
+[ ] Verificar se a frase original é igual à recuperada
+[ ] Testar palavras repetidas e frequências iguais
+[ ] Testar o último byte incompleto
+[ ] Testar espaços e pontuação
+[ ] Testar a execução independente dos programas
+*/
+
+/*
+primeiro eu construo a lista de registros enquanto leio o arq texto pra depois de lido, fazer o algoritmo de construcao da arvore em cima dessa lista criada, pra atraves dos caminhos, definir o codigo da arvore de huffman
+*/
+
 int main(void)
 {
     return 0;
