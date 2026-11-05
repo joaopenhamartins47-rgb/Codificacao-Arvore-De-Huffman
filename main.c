@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
 
 struct bits
@@ -182,18 +185,78 @@ void tratar_palavra(listareg **inicio, char palavra[])
     if (achado)
         achado->frequencia++;
     else
-        inserir_registro(inicio, palavra);
+        inserir_registro(&*inicio, palavra);
 }
 
-void construir_lista_registros()
+
+void construir_lista_registros(listareg **inicio)
 {
     //Vou ler o arquivo texto e tratar cada palavra inserindo na lista de registros
+    char letra, palavra[50];
+    int i;
+
+    FILE *Ptrarq = fopen("texto.txt", "r");
+
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        i = 0;
+
+        while(!feof(Ptrarq))
+        {
+            letra = fgetc(Ptrarq);
+
+            letra = tolower(letra);
+
+            if(letra >= 'a' && letra <= 'z')
+                palavra[i++] = letra;
+            else
+            {
+                if(i > 0)
+                {
+                    palavra[i] = '\0';
+                    tratar_palavra(&*inicio, palavra);
+                    i = 0;
+                }
+
+                if(letra == ' ' || letra == '\n')
+                {
+                    palavra[0] = ' ';
+                    palavra[1] = '\0';
+                    tratar_palavra(&*inicio, palavra);
+                }
+            }
+            
+        }
+
+        //Insere a ultima palavra
+        if(i > 0)
+        {
+            palavra[i] = '\0';
+            tratar_palavra(&*inicio, palavra);
+        }
+
+        fclose(Ptrarq);
+    }
+}
+
+void exibir_lista_registros(listareg *inicio)
+{
+    while(inicio)
+    {
+        printf("Simbolo: %d Freq: %d Huffman: %s Palavra: %s \n", inicio->simbolo, inicio->frequencia, inicio->huffman, inicio->palavra);
+        inicio = inicio->prox;
+    }
 }
 
 
 
 int main(void)
 {
+    listareg *inicio = NULL;
+    construir_lista_registros(&inicio);
+    exibir_lista_registros(inicio);
     return 0;
 }
 
@@ -201,19 +264,19 @@ int main(void)
 
 /*
 Progresso do trabalho
-0/24
+4/24
 
 
 
 1. Preparação
-[ ] Criar texto_base.txt com conteúdo maior que o exemplo
-[ ] Definir tratamento de pontuação, maiúsculas, espaços e acentos
+[✅] Criar texto_base.txt com conteúdo maior que o exemplo
+[✅] Definir tratamento de pontuação, maiúsculas, espaços e acentos
 [ ] Definir as três estruturas e suas operações
 
 
 2. Programa 1
-[ ] Ler o arquivo texto
-[ ] Construir lista de registros e contar frequências
+[✅] Ler o arquivo texto
+[✅] Construir lista de registros e contar frequências
 [ ] Criar as folhas da árvore
 [ ] Implementar lista encadeada ordenada
 [ ] Construir a árvore de Huffman
