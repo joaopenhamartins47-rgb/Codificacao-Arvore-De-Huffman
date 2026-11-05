@@ -34,6 +34,7 @@ struct Arvore_Huffman
 
 struct Lista_encadeada
 {
+    int info, freq;
     huffman *no;
     struct Lista_encadeada *prox;
 };typedef struct Lista_encadeada Listaen;
@@ -45,47 +46,6 @@ struct Registro_Arquivo
     char palavra[50];
     char codigo[100];
 };typedef struct Registro_Arquivo regarquivo;
-
-/*
-2. Como construir a árvore?
-
-O processo será exatamente o seguinte:
-Algoritmo de construção
-1. Ler o arquivo de texto
-   
-   Percorrer o texto e identificar as palavras distintas, ignorando pontuação e diferenças entre maiúsculas e minúsculas.
-
-2. Criar os registros
-   
-   Cada palavra distinta recebe um índice e sua frequência é incrementada a cada ocorrência. O espaço também recebe seu próprio registro.
-
-3. Criar os nós folha
-   
-   Para cada registro, criar um nó com info = índice do registro e frequência igual à frequência da palavra.
-
-4. Inserir os nós na lista ordenada
-   
-   A lista deve estar organizada da menor para a maior frequência.
-
-5. Remover os dois menores
-   
-   Retirar os dois primeiros elementos da lista.
-
-6. Criar um nó pai
-   
-   info = -1, frequência = soma das frequências dos dois nós removidos. Os dois nós passam a ser seus filhos.
-
-7. Reinserir o pai
-   
-   Inserir o novo nó na posição correta da lista ordenada.
-
-8. Repetir
-   
-   Continuar até restar apenas um elemento na lista. Esse elemento será a raiz da árvore.
-*/
-
-
-
 
 
 /*
@@ -248,6 +208,38 @@ void exibir_lista_registros(listareg *inicio)
         printf("Simbolo: %d Freq: %d Huffman: %s Palavra: %s \n", inicio->simbolo, inicio->frequencia, inicio->huffman, inicio->palavra);
         inicio = inicio->prox;
     }
+}
+
+
+/*
+Criar a lista ordenada a partir dos registros.
+
+Remover os dois menores.
+
+Criar ou recuperar as duas árvores correspondentes.
+
+Criar o pai com info = -1.
+
+Somar as frequências inteiras.
+
+Reinserir o pai na lista.
+
+Repetir até sobrar a raiz.
+*/
+
+void construir_lista_ordenada(Listaen **inicio, listareg *registros)
+{
+    //Percorre o arquivo e insere ordenado pra cada registro
+}
+
+void inserir_arvore_lista(Listaen **inicio, huffman*no)
+{
+    
+}
+
+void construir_arvore(listareg *registros, huffman **raiz)
+{
+
 }
 
 
