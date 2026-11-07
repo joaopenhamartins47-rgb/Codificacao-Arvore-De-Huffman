@@ -237,6 +237,15 @@ Listaen *criar_lista(int freq, int info)
     return novo;
 }
 
+huffman *criar_pai(int freq, int simbolo)
+{
+    huffman *novo = (huffman*)malloc(sizeof(huffman));
+    novo->freq = freq;
+    novo->info = simbolo;
+    novo->dir = NULL;
+    novo->esq = NULL;
+}
+
 void inserir_ordenado(Listaen **inicio, int freq, int info)
 {
     Listaen *aux = *inicio;
@@ -276,9 +285,34 @@ void construir_lista_ordenada(Listaen **inicio, listareg *registros)
     }
 }
 
-void inserir_arvore_lista(Listaen **inicio, huffman*no)
+void inserir_arvore_lista(Listaen **inicio, huffman *no)
 {
-    
+    Listaen *aux = *inicio;
+    Listaen *ant = NULL;
+    Listaen *novo;
+
+    if(no)
+    {
+        novo = criar_lista(no->freq, no->info);
+        novo->no = no;
+
+        if(!*inicio || novo->freq < (*inicio)->freq)
+        {
+            novo->prox = *inicio;
+            *inicio = novo;
+        }
+        else
+        {
+            while(aux && novo->freq >= aux->freq)
+            {
+                ant = aux;
+                aux = aux->prox;
+            }
+
+            ant->prox = novo;
+            novo->prox = aux;
+        }
+    }
 }
 
 void construir_arvore(listareg *registros, huffman **raiz)
