@@ -227,9 +227,53 @@ Reinserir o pai na lista.
 Repetir até sobrar a raiz.
 */
 
+Listaen *criar_lista(int freq, int info)
+{
+    Listaen *novo = (Listaen*)malloc(sizeof(Listaen));
+    novo->freq = freq;
+    novo->info = info;
+    novo->no = NULL;
+    novo->prox = NULL;
+    return novo;
+}
+
+void inserir_ordenado(Listaen **inicio, int freq, int info)
+{
+    Listaen *aux = *inicio;
+    Listaen *ant = NULL;
+    Listaen *novo = criar_lista(freq, info);
+    if(!*inicio)
+    {
+        *inicio = novo;
+    }
+    else
+    {
+        if(novo->freq < aux->freq)
+        {
+            novo->prox = aux;
+            *inicio = novo;
+        }
+        else
+        {
+            while(aux && novo->freq >= aux->freq)
+            {
+                ant = aux;
+                aux = aux->prox;
+            }
+            ant->prox = novo;
+            novo->prox = aux;
+        }
+    }
+}
+
 void construir_lista_ordenada(Listaen **inicio, listareg *registros)
 {
     //Percorre o arquivo e insere ordenado pra cada registro
+    while(registros)
+    {
+        inserir_ordenado(&*inicio, registros->frequencia, registros->simbolo);
+        registros = registros->prox;
+    }
 }
 
 void inserir_arvore_lista(Listaen **inicio, huffman*no)
