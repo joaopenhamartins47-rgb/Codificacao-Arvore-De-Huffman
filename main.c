@@ -285,6 +285,8 @@ void construir_lista_ordenada(Listaen **inicio, listareg *registros)
     }
 }
 
+
+//Aqui a logica eh fazer a lista apontar pra arvore, entao se cria uma lista nova com a frequencia da nova arvore, no qual a lista criada esta apontando
 void inserir_arvore_lista(Listaen **inicio, huffman *no)
 {
     Listaen *aux = *inicio;
@@ -315,6 +317,23 @@ void inserir_arvore_lista(Listaen **inicio, huffman *no)
     }
 }
 
+/*
+7. Resumo da função construir_arvore()
+A sequência de responsabilidades fica:
+1. Inicializar a lista auxiliar.
+2. Construir a lista ordenada a partir dos registros.
+3. Enquanto houver mais de um elemento:
+   - Remover os dois primeiros.
+   - Verificar se cada elemento já possui uma árvore em no.
+   - Caso não possua, criar sua folha.
+   - Criar o nó pai com info = -1.
+   - Somar as frequências.
+   - Conectar os dois filhos.
+   - Inserir o pai ordenadamente.
+4. Recuperar a raiz do único elemento restante.
+*/
+
+
 void construir_arvore(listareg *registros, huffman **raiz)
 {
 
@@ -341,14 +360,14 @@ Progresso do trabalho
 1. Preparação
 [✅] Criar texto_base.txt com conteúdo maior que o exemplo
 [✅] Definir tratamento de pontuação, maiúsculas, espaços e acentos
-[ ] Definir as três estruturas e suas operações
+[✅] Definir as três estruturas e suas operações
 
 
 2. Programa 1
 [✅] Ler o arquivo texto
 [✅] Construir lista de registros e contar frequências
-[ ] Criar as folhas da árvore
-[ ] Implementar lista encadeada ordenada
+[✅] Criar as folhas da árvore
+[✅] Implementar lista encadeada ordenada
 [ ] Construir a árvore de Huffman
 [ ] Gerar códigos e preencher os registros
 [ ] Exibir lista e árvore
