@@ -28,7 +28,7 @@ struct Lista_de_registros
 
 struct Arvore_Huffman
 {
-    int info, freq;
+    int info;
     struct Arvore_Huffman *esq, *dir;
 };typedef struct Arvore_Huffman huffman;
 
@@ -237,41 +237,44 @@ Listaen *criar_lista(int freq, int info)
     return novo;
 }
 
-huffman *criar_pai(int freq, int simbolo)
+huffman *criar_no(int simbolo)
 {
     huffman *novo = (huffman*)malloc(sizeof(huffman));
-    novo->freq = freq;
     novo->info = simbolo;
     novo->dir = NULL;
     novo->esq = NULL;
+    return novo;
 }
 
-void inserir_ordenado(Listaen **inicio, int freq, int info)
+//Recupera a arvore do elemento da lista ou cria a folha se ainda nao existe
+huffman *obter_arvore(Listaen *elem)
+{
+    if(elem->no)
+        return elem->no;
+    return criar_no(elem->info);
+}
+
+void inserir_ordenado(Listaen **inicio, int freq, int info, huffman *no)
 {
     Listaen *aux = *inicio;
     Listaen *ant = NULL;
     Listaen *novo = criar_lista(freq, info);
-    if(!*inicio)
+    novo->no = no;
+
+    if(!*inicio || novo->freq < (*inicio)->freq)
     {
+        novo->prox = *inicio;
         *inicio = novo;
     }
     else
     {
-        if(novo->freq < aux->freq)
+        while(aux && novo->freq >= aux->freq)
         {
-            novo->prox = aux;
-            *inicio = novo;
+            ant = aux;
+            aux = aux->prox;
         }
-        else
-        {
-            while(aux && novo->freq >= aux->freq)
-            {
-                ant = aux;
-                aux = aux->prox;
-            }
-            ant->prox = novo;
-            novo->prox = aux;
-        }
+        ant->prox = novo;
+        novo->prox = aux;
     }
 }
 
@@ -280,40 +283,43 @@ void construir_lista_ordenada(Listaen **inicio, listareg *registros)
     //Percorre o arquivo e insere ordenado pra cada registro
     while(registros)
     {
-        inserir_ordenado(&*inicio, registros->frequencia, registros->simbolo);
+        inserir_ordenado(&*inicio, registros->frequencia, registros->simbolo, NULL);
         registros = registros->prox;
     }
 }
 
 
-//Aqui a logica eh fazer a lista apontar pra arvore, entao se cria uma lista nova com a frequencia da nova arvore, no qual a lista criada esta apontando
-void inserir_arvore_lista(Listaen **inicio, huffman *no)
+void construir_arvore(listareg *registros, huffman **raiz)
 {
-    Listaen *aux = *inicio;
-    Listaen *ant = NULL;
-    Listaen *novo;
+    Listaen *inicio = NULL, *a, *b;
+    huffman *pai;
+    int soma;
 
-    if(no)
+    *raiz = NULL;
+    construir_lista_ordenada(&inicio, registros);
+
+    while(inicio && inicio->prox)
     {
-        novo = criar_lista(no->freq, no->info);
-        novo->no = no;
+        a = inicio;
+        b = inicio->prox;
+        inicio = b->prox;
 
-        if(!*inicio || novo->freq < (*inicio)->freq)
-        {
-            novo->prox = *inicio;
-            *inicio = novo;
-        }
-        else
-        {
-            while(aux && novo->freq >= aux->freq)
-            {
-                ant = aux;
-                aux = aux->prox;
-            }
+        pai = criar_no(-1);
+        pai->esq = obter_arvore(a);
+        pai->dir = obter_arvore(b);
+        soma = a->freq + b->freq;
 
-            ant->prox = novo;
-            novo->prox = aux;
-        }
+        free(a);
+        free(b);
+
+        inserir_ordenado(&inicio, soma, -1, pai);
+    }
+
+    //Sobrou so um elemento na lista, ele eh a raiz
+    if(inicio)
+    {
+        *raiz = obter_arvore(inicio);
+        free(inicio);
     }
 }
 
@@ -334,11 +340,6 @@ A sequência de responsabilidades fica:
 */
 
 
-void construir_arvore(listareg *registros, huffman **raiz)
-{
-
-}
-
 
 
 int main(void)
@@ -353,7 +354,7 @@ int main(void)
 
 /*
 Progresso do trabalho
-4/24
+7/24
 
 
 
@@ -368,7 +369,7 @@ Progresso do trabalho
 [✅] Construir lista de registros e contar frequências
 [✅] Criar as folhas da árvore
 [✅] Implementar lista encadeada ordenada
-[ ] Construir a árvore de Huffman
+[✅] Construir a árvore de Huffman
 [ ] Gerar códigos e preencher os registros
 [ ] Exibir lista e árvore
 [ ] Gravar registros.bin
