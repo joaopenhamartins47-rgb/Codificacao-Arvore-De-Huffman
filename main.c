@@ -323,21 +323,45 @@ void construir_arvore(listareg *registros, huffman **raiz)
     }
 }
 
-/*
-7. Resumo da função construir_arvore()
-A sequência de responsabilidades fica:
-1. Inicializar a lista auxiliar.
-2. Construir a lista ordenada a partir dos registros.
-3. Enquanto houver mais de um elemento:
-   - Remover os dois primeiros.
-   - Verificar se cada elemento já possui uma árvore em no.
-   - Caso não possua, criar sua folha.
-   - Criar o nó pai com info = -1.
-   - Somar as frequências.
-   - Conectar os dois filhos.
-   - Inserir o pai ordenadamente.
-4. Recuperar a raiz do único elemento restante.
-*/
+listareg *buscar_simbolo(listareg *inicio, int simbolo)
+{
+    while(inicio && inicio->simbolo != simbolo)
+        inicio = inicio->prox;
+    return inicio;
+}
+
+void gravar_huffman(listareg *inicio, char *codigo, int simbolo)
+{
+    listareg *pos = buscar_simbolo(inicio, simbolo);
+    if(pos)
+        strcpy(pos->huffman, codigo);
+}
+
+
+void gerar_codigos(listareg *inicio, huffman *raiz, int nivel, char *valor)
+{
+    if(raiz)
+    {
+        if(!raiz->esq && !raiz->dir) //significa que eh folha, entao guarda
+        {
+            valor[nivel] = '\0';
+            gravar_huffman(inicio, valor, raiz->info);
+        }
+        else
+        {
+            if(raiz->esq)
+            {
+                valor[nivel] = '0';
+                gerar_codigos(inicio, raiz->esq, nivel+1, valor);
+            }
+            if(raiz->dir)
+            {
+                valor[nivel] = '1';
+                gerar_codigos(inicio, raiz->dir, nivel+1, valor);
+            }
+        }
+    }
+}
 
 
 
