@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 
-struct bits
+struct Bits
 {
     unsigned char b0:1;
     unsigned char b1:1;
@@ -14,6 +14,12 @@ struct bits
     unsigned char b5:1;
     unsigned char b6:1;
     unsigned char b7:1;
+};
+
+union Byte_Huffman
+{
+    unsigned char byte;
+    struct Bits bits;
 };
 
 
@@ -410,6 +416,144 @@ void exibir_arvore_horizontal(huffman *raiz, int nivel)
 }
 
 
+void gravar_codigo(FILE *Ptrarq, char codigo[], unsigned char *byte, int *qtd_bits, unsigned long *total_bits)
+{
+    int i = 0;
+
+    while(codigo[i] != '\0')
+    {
+        if(codigo[i] == '1')
+            *byte = (*byte * 2) + 1;
+        else
+            *byte = *byte * 2;
+
+        (*qtd_bits)++;
+        (*total_bits)++;
+
+        if(*qtd_bits == 8)
+        {
+            fwrite(byte, sizeof(unsigned char), 1, Ptrarq);
+
+            *byte = 0;
+            *qtd_bits = 0;
+        }
+
+        i++;
+    }
+}
+
+void codificar_palavra(FILE *Ptrarq, listareg *registros, char palavra[], unsigned char *byte, int *qtd_bits, unsigned long *total_bits, int *erro)
+{
+    listareg *achado = existe_registro(registros, palavra);
+
+    if(achado)
+        gravar_codigo(Ptrarq, achado->huffman, byte, qtd_bits, total_bits);
+    else
+    {
+        printf("Palavra nao encontrada: %s\n", palavra);
+        *erro = 1;
+    }
+}
+
+void finalizar_byte(FILE *Ptrarq, unsigned char *byte, int *qtd_bits)
+{
+    if(*qtd_bits > 0)
+    {
+        while(*qtd_bits < 8)
+        {
+            *byte = *byte * 2;
+            (*qtd_bits)++;
+        }
+
+        fwrite(byte, sizeof(unsigned char), 1, Ptrarq);
+
+        *byte = 0;
+        *qtd_bits = 0;
+    }
+}
+
+void codificar_frase(listareg *registros, char frase[])
+{
+    FILE *Ptrarq = fopen("frase_codificada.bin", "wb");
+
+    unsigned char byte = 0;
+    unsigned long total_bits = 0;
+
+    int qtd_bits = 0;
+    int i = 0, j = 0, erro = 0;
+
+    char palavra[50], letra, espaco[2];
+
+    if(!Ptrarq)
+        printf("Erro ao criar arquivo!\n");
+    else
+    {
+        /* Reserva o espaco para a quantidade de bits */
+        fwrite(&total_bits, sizeof(unsigned long), 1, Ptrarq);
+
+        while(frase[i] != '\0')
+        {
+            letra = (char)tolower((unsigned char)frase[i]);
+
+            if(letra >= 'a' && letra <= 'z')
+            {
+                if(j < 49)
+                    palavra[j++] = letra;
+                else
+                {
+                    printf("Palavra muito grande!\n");
+                    erro = 1;
+                }
+            }
+            else
+            {
+                if(j > 0)
+                {
+                    palavra[j] = '\0';
+
+                    codificar_palavra(Ptrarq, registros, palavra, &byte, &qtd_bits, &total_bits, &erro);
+                    j = 0;
+                }
+
+                if(letra == ' ')
+                {
+                    espaco[0] = ' ';
+                    espaco[1] = '\0';
+
+                    codificar_palavra(Ptrarq, registros, espaco, &byte, &qtd_bits, &total_bits, &erro);
+                }
+            }
+
+            i++;
+        }
+
+        /* Insere a ultima palavra */
+        if(j > 0)
+        {
+            palavra[j] = '\0';
+
+            codificar_palavra(Ptrarq, registros, palavra, &byte, &qtd_bits, &total_bits, &erro);
+        }
+
+        if(!erro)
+        {
+            finalizar_byte(Ptrarq, &byte, &qtd_bits);
+
+            /* Volta ao inicio para gravar a quantidade de bits */
+            fseek(Ptrarq, 0L, SEEK_SET);
+
+            fwrite(&total_bits, sizeof(unsigned long), 1, Ptrarq);
+
+            printf("Frase codificada com sucesso!\n");
+            printf("Total de bits: %lu\n", total_bits);
+        }
+        else
+            printf("Erro na codificacao da frase!\n");
+
+        fclose(Ptrarq);
+    }
+}
+
 
 int main(void)
 {
@@ -423,7 +567,7 @@ int main(void)
 
 /*
 Progresso do trabalho
-7/24
+12/24
 
 
 
@@ -439,9 +583,9 @@ Progresso do trabalho
 [✅] Criar as folhas da árvore
 [✅] Implementar lista encadeada ordenada
 [✅] Construir a árvore de Huffman
-[ ] Gerar códigos e preencher os registros
-[ ] Exibir lista e árvore
-[ ] Gravar registros.bin
+[✅] Gerar códigos e preencher os registros
+[✅] Exibir lista e árvore
+[✅] Gravar registros.bin
 [ ] Codificar uma frase diferente
 [ ] Montar bytes e gravar frase_codificada.bin
 
@@ -459,6 +603,6 @@ Progresso do trabalho
 [ ] Verificar se a frase original é igual à recuperada
 [ ] Testar palavras repetidas e frequências iguais
 [ ] Testar o último byte incompleto
-[ ] Testar espaços e pontuação
+[✅] Testar espaços e pontuação
 [ ] Testar a execução independente dos programas
 */
