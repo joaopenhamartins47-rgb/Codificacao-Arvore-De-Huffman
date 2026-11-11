@@ -133,8 +133,7 @@ listareg *existe_registro(listareg *inicio, char palavra[])
 {
     while(inicio && strcmp(inicio->palavra, palavra) != 0)
         inicio = inicio->prox;
-    if(!inicio)
-        return NULL;
+    
     return inicio;
 }
 
@@ -363,6 +362,52 @@ void gerar_codigos(listareg *inicio, huffman *raiz, int nivel, char *valor)
     }
 }
 
+/*
+4. Codificar uma frase diferente
+
+Utilizar os códigos armazenados na lista de registros.
+
+5. Gravar frase_codificada.bin
+
+Compactar a sequência em bytes de 8 bits.
+*/
+
+void gravar_registros(listareg *inicio)
+{
+    FILE *Ptrarq = fopen("registros.bin", "wb");
+    regarquivo dados;
+    listareg *aux = inicio;
+    if(aux)
+    {
+        
+        while(aux)
+        {
+            strcpy(dados.palavra, aux->palavra);
+            strcpy(dados.codigo, aux->huffman);
+            dados.simbolo = aux->simbolo;
+            fwrite(&dados, sizeof(regarquivo), 1, Ptrarq);
+            aux = aux->prox;
+        }
+    }
+    fclose(Ptrarq);
+}
+
+void exibir_arvore_horizontal(huffman *raiz, int nivel)
+{
+    int i;
+
+    if(raiz)
+    {
+        exibir_arvore_horizontal(raiz->dir, nivel + 1);
+
+        for(i = 0; i < nivel; i++)
+            printf("    ");
+
+        printf("%d\n", raiz->info);
+
+        exibir_arvore_horizontal(raiz->esq, nivel + 1);
+    }
+}
 
 
 
