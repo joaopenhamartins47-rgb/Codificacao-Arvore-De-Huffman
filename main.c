@@ -416,25 +416,35 @@ void exibir_arvore_horizontal(huffman *raiz, int nivel)
 }
 
 
-void gravar_codigo(FILE *Ptrarq, char codigo[], unsigned char *byte, int *qtd_bits, unsigned long *total_bits)
+void gravar_codigo(FILE *Ptrarq, char codigo[], union Byte_Huffman *byte, int *qtd_bits, unsigned long *total_bits)
 {
     int i = 0;
 
     while(codigo[i] != '\0')
     {
         if(codigo[i] == '1')
-            *byte = (*byte * 2) + 1;
-        else
-            *byte = *byte * 2;
+        {
+            switch(*qtd_bits)
+            {
+                case 0: byte->bits.b7 = 1; break;
+                case 1: byte->bits.b6 = 1; break;
+                case 2: byte->bits.b5 = 1; break;
+                case 3: byte->bits.b4 = 1; break;
+                case 4: byte->bits.b3 = 1; break;
+                case 5: byte->bits.b2 = 1; break;
+                case 6: byte->bits.b1 = 1; break;
+                case 7: byte->bits.b0 = 1; break;
+            }
+        }
 
         (*qtd_bits)++;
         (*total_bits)++;
 
         if(*qtd_bits == 8)
         {
-            fwrite(byte, sizeof(unsigned char), 1, Ptrarq);
+            fwrite(&byte->byte, sizeof(unsigned char), 1, Ptrarq);
 
-            *byte = 0;
+            byte->byte = 0;
             *qtd_bits = 0;
         }
 
@@ -442,7 +452,7 @@ void gravar_codigo(FILE *Ptrarq, char codigo[], unsigned char *byte, int *qtd_bi
     }
 }
 
-void codificar_palavra(FILE *Ptrarq, listareg *registros, char palavra[], unsigned char *byte, int *qtd_bits, unsigned long *total_bits, int *erro)
+void codificar_palavra(FILE *Ptrarq, listareg *registros, char palavra[], union Byte_Huffman *byte, int *qtd_bits, unsigned long *total_bits, int *erro)
 {
     listareg *achado = existe_registro(registros, palavra);
 
@@ -455,19 +465,13 @@ void codificar_palavra(FILE *Ptrarq, listareg *registros, char palavra[], unsign
     }
 }
 
-void finalizar_byte(FILE *Ptrarq, unsigned char *byte, int *qtd_bits)
+void finalizar_byte(FILE *Ptrarq, union Byte_Huffman *byte, int *qtd_bits)
 {
     if(*qtd_bits > 0)
     {
-        while(*qtd_bits < 8)
-        {
-            *byte = *byte * 2;
-            (*qtd_bits)++;
-        }
+        fwrite(&byte->byte, sizeof(unsigned char), 1, Ptrarq);
 
-        fwrite(byte, sizeof(unsigned char), 1, Ptrarq);
-
-        *byte = 0;
+        byte->byte = 0;
         *qtd_bits = 0;
     }
 }
@@ -476,13 +480,15 @@ void codificar_frase(listareg *registros, char frase[])
 {
     FILE *Ptrarq = fopen("frase_codificada.bin", "wb");
 
-    unsigned char byte = 0;
+    union Byte_Huffman byte;
     unsigned long total_bits = 0;
 
     int qtd_bits = 0;
     int i = 0, j = 0, erro = 0;
 
     char palavra[50], letra, espaco[2];
+
+    byte.byte = 0;
 
     if(!Ptrarq)
         printf("Erro ao criar arquivo!\n");
@@ -559,6 +565,7 @@ int main(void)
 {
     listareg *inicio = NULL;
     construir_lista_registros(&inicio);
+    
     exibir_lista_registros(inicio);
     return 0;
 }
