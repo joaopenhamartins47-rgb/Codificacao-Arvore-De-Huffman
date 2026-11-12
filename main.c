@@ -388,8 +388,12 @@ void gravar_registros(listareg *inicio)
         
         while(aux)
         {
-            strcpy(dados.palavra, aux->palavra);
+            if(strcmp(aux->palavra, " ") == 0)
+                strcpy(dados.palavra, "' '");
+            else
+                strcpy(dados.palavra, aux->palavra);
             strcpy(dados.codigo, aux->huffman);
+            
             dados.simbolo = aux->simbolo;
             fwrite(&dados, sizeof(regarquivo), 1, Ptrarq);
             aux = aux->prox;
@@ -398,20 +402,19 @@ void gravar_registros(listareg *inicio)
     fclose(Ptrarq);
 }
 
-void exibir_arvore_horizontal(huffman *raiz, int nivel)
+void exibir_arvore_vertical(huffman *raiz, int nivel)
 {
     int i;
 
     if(raiz)
     {
-        exibir_arvore_horizontal(raiz->dir, nivel + 1);
-
         for(i = 0; i < nivel; i++)
             printf("    ");
 
         printf("%d\n", raiz->info);
 
-        exibir_arvore_horizontal(raiz->esq, nivel + 1);
+        exibir_arvore_vertical(raiz->esq, nivel + 1);
+        exibir_arvore_vertical(raiz->dir, nivel + 1);
     }
 }
 
@@ -499,7 +502,7 @@ void codificar_frase(listareg *registros, char frase[])
 
         while(frase[i] != '\0')
         {
-            letra = (char)tolower((unsigned char)frase[i]);
+            letra = tolower(frase[i]);
 
             if(letra >= 'a' && letra <= 'z')
             {
@@ -564,9 +567,28 @@ void codificar_frase(listareg *registros, char frase[])
 int main(void)
 {
     listareg *inicio = NULL;
+    huffman *raiz = NULL;
+
+    char codigo[100];
+
+    char frase[] = "o homem olhava a janela e o tempo passava pela rua";
+
     construir_lista_registros(&inicio);
-    
+
+    construir_arvore(inicio, &raiz);
+
+    gerar_codigos(inicio, raiz, 0, codigo);
+
+    printf("\nLISTA DE REGISTROS:\n");
     exibir_lista_registros(inicio);
+
+    printf("\nARVORE DE HUFFMAN:\n");
+    exibir_arvore_vertical(raiz, 0);
+
+    gravar_registros(inicio);
+
+    codificar_frase(inicio, frase);
+
     return 0;
 }
 
@@ -594,7 +616,7 @@ Progresso do trabalho
 [✅] Exibir lista e árvore
 [✅] Gravar registros.bin
 [ ] Codificar uma frase diferente
-[ ] Montar bytes e gravar frase_codificada.bin
+[✅] Montar bytes e gravar frase_codificada.bin
 
 
 3. Programa 2
