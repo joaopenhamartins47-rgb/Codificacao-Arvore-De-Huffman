@@ -620,10 +620,10 @@ Progresso do trabalho
 
 
 3. Programa 2
-[ ] Ler registros.bin
-[ ] Reconstruir a árvore utilizando os códigos
-[ ] Ler o cabeçalho e os bytes codificados
-[ ] Extrair os bits sem deslocamentos
+[✅] Ler registros.bin
+[✅] Reconstruir a árvore utilizando os códigos
+[✅] Ler o cabeçalho e os bytes codificados
+[✅] Extrair os bits sem deslocamentos
 [ ] Percorrer a árvore e recuperar os símbolos
 [ ] Montar e exibir a frase decodificada
 

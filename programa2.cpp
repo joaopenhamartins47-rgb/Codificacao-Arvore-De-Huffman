@@ -170,8 +170,10 @@ unsigned char *ler_bytes_codificados(FILE *Ptrarq, unsigned long total_bits, int
         (*qtd_bytes)++;
 
     bytes = (unsigned char *) malloc(*qtd_bytes * sizeof(unsigned char));
+
     for(i = 0; i < *qtd_bytes; i++)
         fread(&bytes[i], sizeof(unsigned char), 1, Ptrarq);
+
     return bytes;
 }
 
