@@ -418,88 +418,6 @@ void exibir_arvore_vertical(huffman *raiz, int nivel)
     }
 }
 
-listareg *criar_registro_lido(regarquivo dados)
-{
-    listareg *novo =(listareg*)malloc(sizeof(listareg));
-    novo->simbolo = dados.simbolo;
-    novo->frequencia = 0;
-    strcpy(novo->huffman, dados.codigo);
-    strcpy(novo->palavra, dados.palavra);
-    novo->prox = NULL;
-    return novo;
-}
-
-void inserir_registro_lido(listareg **inicio, regarquivo dados)
-{
-	//insere no fim da lista
-    listareg *aux;
-    listareg *novo = criar_registro_lido(dados);
-    if(*inicio == NULL)
-        *inicio = novo;
-    else{
-        aux = *inicio;
-        while(aux->prox != NULL)
-            aux = aux->prox;
-        aux->prox = novo;
-    }
-}
-
-void ler_registros(listareg **inicio)
-{
-    FILE *Ptrarq = fopen("registros.bin", "rb");
-    regarquivo dados;
-    
-    if(!Ptrarq)
-        printf("Erro ao abrir arquivo!\n");
-   
-    else{
-        while(fread(&dados, sizeof(regarquivo), 1, Ptrarq) == 1)
-            inserir_registro_lido(&*inicio, dados);
-
-        fclose(Ptrarq);
-    }
-}
-
-void inserir_codigo_arvore(huffman **raiz, char *codigo, int simbolo)
-{
-    huffman *atual;
-    int i = 0;
-    if(!*raiz)
-        *raiz = criar_no(-1);
-
-    atual = *raiz;
-    while(codigo[i] != '\0')
-	{
-        if(codigo[i] == '0')
-        {
-            if(!atual->esq)
-                atual->esq = criar_no(-1);
-            atual = atual->esq;
-        }
-        else
-        {
-            if(!atual->dir)
-                atual->dir = criar_no(-1);
-            atual = atual->dir;
-        }
-
-        i++;
-    }
-
-    atual->info = simbolo;
-}
-
-void reconstruir_arvore(listareg *inicio, huffman **raiz)
-{
-    *raiz = NULL;
-    while(inicio)
-    {
-        inserir_codigo_arvore(raiz, inicio->huffman, inicio->simbolo);
-        inicio = inicio->prox;
-    }
-    
-}
-
 
 void gravar_codigo(FILE *Ptrarq, char codigo[], union Byte_Huffman *byte, int *qtd_bits, unsigned long *total_bits)
 {
@@ -702,8 +620,8 @@ Progresso do trabalho
 
 
 3. Programa 2
-[✅] Ler registros.bin
-[✅] Reconstruir a árvore utilizando os códigos
+[ ] Ler registros.bin
+[ ] Reconstruir a árvore utilizando os códigos
 [ ] Ler o cabeçalho e os bytes codificados
 [ ] Extrair os bits sem deslocamentos
 [ ] Percorrer a árvore e recuperar os símbolos
